@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import FontAwesome_swift
 
 class TweetsViewController: UIViewController {
 
@@ -14,11 +15,22 @@ class TweetsViewController: UIViewController {
     var tweets: [Tweet]?
 
     override func viewDidLoad() {
-        tableView.estimatedRowHeight = 100
-        tableView.rowHeight = UITableViewAutomaticDimension
+        setupNavigationBar()
+        setupTableView()
+        loadTweets()
+    }
+    
+    func setupNavigationBar() {
+//        navigationItem.title = "@\(User.currentUser?.screenName)"
+        navigationItem.backBarButtonItem?.setTitleTextAttributes([NSFontAttributeName: UIFont.fontAwesomeOfSize(30)], forState: UIControlState.Normal)
+        navigationItem.backBarButtonItem?.title = String.fontAwesomeIconWithName(FontAwesome.PowerOff)
+    }
+    
+    func setupTableView() {
         tableView.delegate = self
         tableView.dataSource = self
-        loadTweets()
+        tableView.estimatedRowHeight = 100
+        tableView.rowHeight = UITableViewAutomaticDimension
     }
     
     func loadTweets() {
@@ -44,6 +56,7 @@ extension TweetsViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("TweetCell", forIndexPath: indexPath) as! TweetCell
+        cell.tweet = self.tweets?[indexPath.row]
         return cell
     }
 }

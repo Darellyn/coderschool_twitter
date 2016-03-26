@@ -9,5 +9,6 @@ target 'Twitter' do
     pod 'Alamofire'
     pod 'AlamofireImage'
     pod 'MBProgressHUD'
+    pod 'DateTools'
 end
 

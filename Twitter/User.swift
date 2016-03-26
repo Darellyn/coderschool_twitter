@@ -17,10 +17,10 @@ class User: NSObject {
     
     init(dictionary: NSDictionary) {
         name = dictionary["name"] as? String
-        screenName = dictionary["name"] as? String
+        screenName = dictionary["screen_name"] as? String
         let profileUrlString = dictionary["profile_image_url_https"] as? String
         if let profileUrlString = profileUrlString {
-            profileUrl = NSURL(string: profileUrlString)
+            profileUrl = NSURL(string: profileUrlString.stringByReplacingOccurrencesOfString("_normal", withString: "_bigger"))
         }
         tagline = dictionary["description"] as? String
         self.dictionary = dictionary

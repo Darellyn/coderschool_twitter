@@ -8,6 +8,8 @@
 
 import UIKit
 import AlamofireImage
+import DateTools
+import FontAwesome_swift
 
 class TweetCell: UITableViewCell {
     @IBOutlet weak var retweetTypeView: UILabel!
@@ -17,14 +19,62 @@ class TweetCell: UITableViewCell {
     @IBOutlet weak var screenNameView: UILabel!
     @IBOutlet weak var timeView: UILabel!
     @IBOutlet weak var statusView: UILabel!
-    @IBOutlet weak var replyView: UILabel!
-    @IBOutlet weak var retweetView: UILabel!
-    @IBOutlet weak var starView: UILabel!
+    @IBOutlet weak var replyView: UIButton!
+    @IBOutlet weak var retweetView: UIButton!
+    @IBOutlet weak var retweetCountView: UILabel!
+    @IBOutlet weak var starView: UIButton!
+    @IBOutlet weak var starCountView: UILabel!
+    @IBOutlet weak var avatarTopConstraint: NSLayoutConstraint!
+    let iconSize = CGFloat(20)
+
     
     var tweet: Tweet? {
         didSet {
+            retweetTypeView.font = UIFont.fontAwesomeOfSize(self.iconSize)
+            replyView.titleLabel?.font = UIFont.fontAwesomeOfSize(self.iconSize)
+            retweetView.titleLabel?.font = UIFont.fontAwesomeOfSize(self.iconSize)
+            starView.titleLabel?.font = UIFont.fontAwesomeOfSize(self.iconSize)
+            
+            retweetTypeView.text = String.fontAwesomeIconWithName(.Retweet)
+            replyView.setTitle(String.fontAwesomeIconWithName(.Reply), forState: .Normal)
+            retweetView.setTitle(String.fontAwesomeIconWithName(.Retweet), forState: .Normal)
+            let favorited = tweet?.favorited ?? false
+            starView.setTitle(String.fontAwesomeIconWithName(favorited ? .Star : .StarO), forState: .Normal)
+            starView.setTitleColor(favorited ? UIColor.init(red: 1.0, green: 0.75, blue: 0.18, alpha: 1.0) : UIColor.lightGrayColor(), forState: .Normal)
+
+            let retweetedStatus = tweet?.retweetedStatus
+            if let retweetedStatus = retweetedStatus {
+                retweetTypeView.hidden = false
+                retweetByView.hidden = false
+                retweetByView.text = "\(tweet?.user?.name ?? "") retweeted"
+                avatarTopConstraint.constant = 29
+                authorLabel.text = retweetedStatus.user?.name
+                screenNameView.text = retweetedStatus.user?.screenName
+            } else {
+                retweetTypeView.hidden = true
+                retweetByView.hidden = true
+                avatarTopConstraint.constant = 8
+                authorLabel.text = tweet?.user?.name
+                screenNameView.text = tweet?.user?.screenName
+            }
             statusView.text = tweet?.text ?? ""
-            // avatarImageView.af_setImageWithURL(tweet.avatar)
+            avatarImageView.image = nil
+            if let profileUrl = tweet?.user?.profileUrl {
+                avatarImageView.af_setImageWithURL(profileUrl, imageTransition: .CrossDissolve(0.2))
+            }
+            let retweetCount = tweet?.retweetCount ?? 0
+            if retweetCount > 0 {
+                retweetCountView.text = "\(retweetCount)"
+            } else {
+                retweetCountView.text = ""
+            }
+            let favoritesCount = tweet?.favoritesCount ?? 0
+            if favoritesCount > 0 {
+                starCountView.text = "\(favoritesCount)"
+            } else {
+                starCountView.text = ""
+            }
+            timeView.text = tweet?.timestamp?.shortTimeAgoSinceNow()
         }
     }
 }
