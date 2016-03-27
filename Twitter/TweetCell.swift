@@ -24,10 +24,12 @@ class TweetCell: UITableViewCell {
     @IBOutlet weak var retweetCountView: UILabel!
     @IBOutlet weak var starView: UIButton!
     @IBOutlet weak var starCountView: UILabel!
+    @IBOutlet weak var photoView: UIImageView!
+    @IBOutlet weak var photoViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var photoViewWidthConstraint: NSLayoutConstraint!
     @IBOutlet weak var avatarTopConstraint: NSLayoutConstraint!
     let iconSize = CGFloat(20)
 
-    
     var tweet: Tweet? {
         didSet {
             retweetTypeView.font = UIFont.fontAwesomeOfSize(self.iconSize)
@@ -58,6 +60,16 @@ class TweetCell: UITableViewCell {
                 screenNameView.text = tweet?.user?.screenName
             }
             statusView.text = tweet?.text ?? ""
+            photoView.image = nil
+            if let photoUrlSmall = tweet?.photo?.mediaSmallUrl {
+                photoView.af_setImageWithURL(photoUrlSmall, imageTransition: .CrossDissolve(0.2))
+                let ratio = tweet?.photo?.ratio
+                if let ratio = ratio {
+                    photoViewHeightConstraint.constant = photoView.frame.width * ratio
+                }
+            } else {
+                photoViewHeightConstraint.constant = 0
+            }
             avatarImageView.image = nil
             if let profileUrl = tweet?.user?.profileUrl {
                 avatarImageView.af_setImageWithURL(profileUrl, imageTransition: .CrossDissolve(0.2))

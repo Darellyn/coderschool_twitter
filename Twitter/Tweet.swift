@@ -17,6 +17,7 @@ class Tweet: NSObject {
     var user: User?
     var favorited = false
     var retweetedStatus: Tweet?
+    var photo: Media?
     
     init(dictionary: NSDictionary) {
         id = dictionary["id"] as? Int64
@@ -38,7 +39,13 @@ class Tweet: NSObject {
             retweetedStatus = Tweet(dictionary: retweetedStatusData)
         }
         favorited = dictionary["favorited"] as? Bool ?? false
-        
+        let entities = dictionary["entities"] as? NSDictionary
+        if let entities = entities {
+            let mediaData = (entities["media"] as? NSArray)?[0] as? NSDictionary
+            if let mediaData = mediaData {
+                photo = Media(dictionary: mediaData)
+            }
+        }
     }
     
     class func tweetsWithArray(dictionaries: [NSDictionary]) -> [Tweet] {

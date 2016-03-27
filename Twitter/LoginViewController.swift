@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import BDBOAuth1Manager
+import MBProgressHUD
 
 class LoginViewController: UIViewController {
 
@@ -26,9 +26,12 @@ class LoginViewController: UIViewController {
     }
     
     func login() {
+        MBProgressHUD.showHUDAddedTo(self.view, animated: true)
         TwitterClient.sharedInstance.login({
+            MBProgressHUD.hideHUDForView(self.view, animated: true)
             self.performSegueWithIdentifier("loginSegue", sender: nil)
         }) { (error) in
+            MBProgressHUD.hideHUDForView(self.view, animated: true)
             ViewUtils.viewController(self, displayMessage: error.localizedDescription)
         }
     }

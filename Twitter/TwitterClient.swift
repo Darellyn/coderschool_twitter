@@ -19,18 +19,18 @@ class TwitterClient: BDBOAuth1SessionManager {
         TwitterClient.sharedInstance.GET("1.1/statuses/home_timeline.json", parameters: nil, progress: nil, success: { (_, response: AnyObject?) in
                 let tweets = Tweet.tweetsWithArray(response as! [NSDictionary])
                 success(tweets)
-            }, failure: { (_, error: NSError) in
+            }) { (_, error: NSError) in
                 failure(error)
-            })
+            }
     }
     
     func currentAccount(success: User -> (), failure: NSError -> ()) {
         TwitterClient.sharedInstance.GET("1.1/account/verify_credentials.json", parameters: nil, progress: nil, success: { (_: NSURLSessionDataTask, response: AnyObject?) -> Void in
                 let user = User(dictionary: response as! NSDictionary)
                 success(user)
-            }, failure: { (_: NSURLSessionDataTask?, error: NSError) -> Void in
+            }) { (_: NSURLSessionDataTask?, error: NSError) -> Void in
                 failure(error)
-            })
+            }
     }
     
     func login(success: () -> (), failure: (NSError) -> ()) {
@@ -43,6 +43,7 @@ class TwitterClient: BDBOAuth1SessionManager {
                 self.openTwitterLoginPage(requestToken.token)
             }) { (error: NSError!) -> Void in
                 self.loginFailure?(error)
+                self.loginFailure = nil
             }
     }
     
@@ -56,12 +57,15 @@ class TwitterClient: BDBOAuth1SessionManager {
         fetchAccessTokenWithPath("https://api.twitter.com/oauth/access_token", method: "POST", requestToken: requestToken, success: { _ -> Void in
             self.currentAccount({ (user) in
                 User.currentUser = user
+                self.loginSuccess?()
+                self.loginSuccess = nil
             }, failure: { (error) in
                 self.loginFailure?(error)
+                self.loginFailure = nil
             })
-            self.loginSuccess?()
         }) { (error: NSError!) -> Void in
             self.loginFailure?(error)
+            self.loginFailure = nil
         }
     }
     

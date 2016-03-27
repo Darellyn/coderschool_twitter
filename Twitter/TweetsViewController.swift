@@ -44,7 +44,9 @@ class TweetsViewController: UIViewController {
     
     
     @IBAction func onLogoutClicked(sender: AnyObject) {
-        TwitterClient.sharedInstance.logout()
+        ViewUtils.viewController(self, displayConfirmDialogWithTitle: nil, andMessage: "Are you sure you want to log out?", withConfirmAction: "Log Out", confirmed: {
+                TwitterClient.sharedInstance.logout()
+            }, withCancelAction: "No", cancelled: nil)
     }
 }
 
