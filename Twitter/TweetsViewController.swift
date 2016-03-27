@@ -48,6 +48,17 @@ class TweetsViewController: UIViewController {
                 TwitterClient.sharedInstance.logout()
             }, withCancelAction: "No", cancelled: nil)
     }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if segue.identifier == "TweetCell" {
+            if let vc = segue.destinationViewController as? TweetViewController {
+                let cell = sender as! TweetCell
+                let indexPath = tableView.indexPathForCell(cell)
+                vc.tweet = tweets?[indexPath!.row]
+                tableView.deselectRowAtIndexPath(indexPath!, animated: false)
+            }
+        }
+    }
 }
 
 
