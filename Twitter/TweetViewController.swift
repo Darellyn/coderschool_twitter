@@ -79,5 +79,7 @@ class TweetViewController: UIViewController {
         let favoritesCount = tweet?.favoritesCount ?? 0
         starCountView.text = "\(favoritesCount)"
         timeView.text = tweet?.timestamp?.formattedDateWithStyle(NSDateFormatterStyle.LongStyle, timeZone: NSTimeZone.defaultTimeZone())
+        
+        scrollView.contentSize = CGSize(width: scrollView.frame.size.width, height: contentView.frame.size.height + 20)
     }
 }

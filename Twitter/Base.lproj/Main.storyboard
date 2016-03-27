@@ -251,8 +251,8 @@
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bfh-DX-HnL">
                                 <rect key="frame" x="0.0" y="64" width="320" height="504"/>
                                 <subviews>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9Eu-cO-qSL">
-                                        <rect key="frame" x="0.0" y="0.0" width="320" height="504"/>
+                                    <view contentMode="scaleToFill" verticalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="9Eu-cO-qSL">
+                                        <rect key="frame" x="0.0" y="0.0" width="320" height="323"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1/29/14 8:00am" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UeF-kz-9gw">
                                                 <rect key="frame" x="8" y="220" width="89" height="15"/>
@@ -368,16 +368,15 @@
                                         </subviews>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="504" id="0y9-uw-bIS"/>
                                             <constraint firstItem="uqd-Kk-GBi" firstAttribute="leading" secondItem="9Eu-cO-qSL" secondAttribute="leadingMargin" id="12X-d9-LjJ"/>
                                             <constraint firstItem="LDK-SG-EFw" firstAttribute="leading" secondItem="jUa-lO-f5G" secondAttribute="trailing" constant="16" id="3ay-fz-vHM"/>
                                             <constraint firstItem="DZz-cY-vtE" firstAttribute="leading" secondItem="9Eu-cO-qSL" secondAttribute="leadingMargin" id="3g3-Tm-6Nu"/>
                                             <constraint firstItem="Mop-YG-sZ8" firstAttribute="leading" secondItem="NPb-lY-Tb1" secondAttribute="leading" id="5GE-fR-MFb"/>
-                                            <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="P9F-yR-x1u" secondAttribute="bottom" id="5Gg-cb-I6d"/>
                                             <constraint firstItem="pjC-uy-Ld0" firstAttribute="centerY" secondItem="LDK-SG-EFw" secondAttribute="centerY" id="6hn-vd-Q5z"/>
                                             <constraint firstItem="KoW-Kz-9BK" firstAttribute="top" secondItem="n0V-Th-xBK" secondAttribute="bottom" constant="12" id="9bF-oN-CzM"/>
                                             <constraint firstItem="jUa-lO-f5G" firstAttribute="centerY" secondItem="n0V-Th-xBK" secondAttribute="centerY" id="A1H-MO-6Mg"/>
                                             <constraint firstItem="uqd-Kk-GBi" firstAttribute="top" secondItem="0TG-DH-lw4" secondAttribute="bottom" constant="8" id="Am8-4y-Ant"/>
+                                            <constraint firstAttribute="bottom" secondItem="P9F-yR-x1u" secondAttribute="bottom" constant="1" id="BFA-4L-yS0"/>
                                             <constraint firstItem="UeF-kz-9gw" firstAttribute="top" secondItem="DZz-cY-vtE" secondAttribute="bottom" constant="8" id="Duz-ta-N8E"/>
                                             <constraint firstItem="Mop-YG-sZ8" firstAttribute="top" secondItem="0TG-DH-lw4" secondAttribute="top" constant="4" id="HaG-o1-OaU"/>
                                             <constraint firstAttribute="trailingMargin" secondItem="uqd-Kk-GBi" secondAttribute="trailing" id="I8d-He-zBx"/>
@@ -399,6 +398,7 @@
                                             <constraint firstItem="LDK-SG-EFw" firstAttribute="centerY" secondItem="jUa-lO-f5G" secondAttribute="centerY" id="cTM-dz-ex7"/>
                                             <constraint firstItem="P9F-yR-x1u" firstAttribute="top" secondItem="02G-Zr-Ghn" secondAttribute="bottom" constant="2" id="dGk-up-Rgd"/>
                                             <constraint firstItem="P9F-yR-x1u" firstAttribute="leading" secondItem="9Eu-cO-qSL" secondAttribute="leading" id="eFt-5k-7iS"/>
+                                            <constraint firstAttribute="height" constant="353" id="ems-8t-y30"/>
                                             <constraint firstItem="0TG-DH-lw4" firstAttribute="top" secondItem="9Eu-cO-qSL" secondAttribute="top" constant="37" id="fC8-vn-53Z"/>
                                             <constraint firstItem="DHL-jw-0QY" firstAttribute="top" secondItem="9Eu-cO-qSL" secondAttribute="top" constant="8" id="fej-zP-trq"/>
                                             <constraint firstItem="02G-Zr-Ghn" firstAttribute="leading" secondItem="0En-UG-ECl" secondAttribute="trailing" constant="70" id="gPm-NX-sut"/>
@@ -413,15 +413,18 @@
                                             <constraint firstItem="DZz-cY-vtE" firstAttribute="top" secondItem="uqd-Kk-GBi" secondAttribute="bottom" constant="8" id="rJI-tq-0e6"/>
                                             <constraint firstItem="0En-UG-ECl" firstAttribute="centerY" secondItem="j8H-Xk-CIu" secondAttribute="centerY" id="y9v-6O-TKN"/>
                                         </constraints>
+                                        <variation key="default">
+                                            <mask key="constraints">
+                                                <exclude reference="ems-8t-y30"/>
+                                            </mask>
+                                        </variation>
                                     </view>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstItem="9Eu-cO-qSL" firstAttribute="top" secondItem="bfh-DX-HnL" secondAttribute="top" id="OGm-iK-chn"/>
-                                    <constraint firstItem="9Eu-cO-qSL" firstAttribute="centerX" secondItem="bfh-DX-HnL" secondAttribute="centerX" id="YNf-kw-r4g"/>
-                                    <constraint firstItem="9Eu-cO-qSL" firstAttribute="centerY" secondItem="bfh-DX-HnL" secondAttribute="centerY" id="gbE-g1-dEN"/>
-                                    <constraint firstItem="9Eu-cO-qSL" firstAttribute="leading" secondItem="bfh-DX-HnL" secondAttribute="leading" id="hu9-UX-rat"/>
-                                    <constraint firstAttribute="bottom" secondItem="9Eu-cO-qSL" secondAttribute="bottom" id="ufQ-yL-kMT"/>
-                                    <constraint firstAttribute="trailing" secondItem="9Eu-cO-qSL" secondAttribute="trailing" id="xjf-0E-A3E"/>
+                                    <constraint firstItem="9Eu-cO-qSL" firstAttribute="top" secondItem="bfh-DX-HnL" secondAttribute="top" id="9w2-YI-gaw"/>
+                                    <constraint firstItem="9Eu-cO-qSL" firstAttribute="leading" secondItem="bfh-DX-HnL" secondAttribute="leading" id="Dl8-tz-asD"/>
+                                    <constraint firstAttribute="bottom" secondItem="9Eu-cO-qSL" secondAttribute="bottom" id="nCy-h8-HNE"/>
+                                    <constraint firstAttribute="trailing" secondItem="9Eu-cO-qSL" secondAttribute="trailing" id="yVF-8s-KvP"/>
                                 </constraints>
                             </scrollView>
                         </subviews>
@@ -430,10 +433,12 @@
                             <constraint firstItem="BWN-xg-CyX" firstAttribute="top" secondItem="bfh-DX-HnL" secondAttribute="bottom" id="09f-TG-RR6"/>
                             <constraint firstItem="bfh-DX-HnL" firstAttribute="top" secondItem="ymW-GG-Lz2" secondAttribute="bottom" id="BJb-nL-orA"/>
                             <constraint firstItem="bfh-DX-HnL" firstAttribute="leading" secondItem="m3I-D5-RJw" secondAttribute="leading" id="W1u-mA-fRs"/>
+                            <constraint firstItem="9Eu-cO-qSL" firstAttribute="width" secondItem="m3I-D5-RJw" secondAttribute="width" id="exT-dK-ipf"/>
                             <constraint firstAttribute="trailing" secondItem="bfh-DX-HnL" secondAttribute="trailing" id="jNo-HN-TMc"/>
                         </constraints>
                     </view>
-                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
+                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="320" height="568"/>
                     <connections>
                         <outlet property="authorLabel" destination="Mop-YG-sZ8" id="clX-KL-Tu6"/>
                         <outlet property="avatarImageView" destination="0TG-DH-lw4" id="bXC-S6-f3L"/>
