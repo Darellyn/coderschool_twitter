@@ -89,4 +89,12 @@ class TweetCell: UITableViewCell {
             timeView.text = tweet?.timestamp?.shortTimeAgoSinceNow()
         }
     }
+    
+    var row: Int? {
+        didSet {
+            replyView.tag = row!
+            starView.tag = row!
+            retweetView.tag = row!
+        }
+    }
 }

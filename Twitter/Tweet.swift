@@ -9,7 +9,7 @@
 import UIKit
 
 class Tweet: NSObject {
-    var id: Int64?
+    var id: String?
     var text: String?
     var timestamp: NSDate?
     var retweetCount = 0
@@ -20,7 +20,7 @@ class Tweet: NSObject {
     var photo: Media?
     
     init(dictionary: NSDictionary) {
-        id = dictionary["id"] as? Int64
+        id = dictionary["id_str"] as? String
         text = dictionary["text"] as? String
         retweetCount = dictionary["retweet_count"] as? Int ?? 0
         favoritesCount = dictionary["favorite_count"] as? Int ?? 0

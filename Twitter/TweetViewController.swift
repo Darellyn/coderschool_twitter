@@ -8,6 +8,15 @@
 
 import UIKit
 import FontAwesome_swift
+import MBProgressHUD
+
+@objc protocol TweetDelegate {
+    optional func tweetDidFavorite(tweet: Tweet)
+    optional func tweetDidUnFavorite(tweet: Tweet)
+    optional func tweetDidRetweet(tweet: Tweet)
+    optional func tweetDidUnRetweet(tweet: Tweet)
+    optional func tweetDidReplyTweet(tweet: Tweet)
+}
 
 class TweetViewController: UIViewController {
     @IBOutlet weak var scrollView: UIScrollView!
@@ -30,8 +39,42 @@ class TweetViewController: UIViewController {
     @IBOutlet weak var avatarTopConstraint: NSLayoutConstraint!
     let iconSize = CGFloat(20)
     var tweet: Tweet?
+    var tweetDidPost: Tweet?
+    var delegate: TweetDelegate?
     
     override func viewDidLoad() {
+        renderTweet()
+    }
+    
+    @IBAction func onReplyClicked(sender: UIButton) {
+        self.performSegueWithIdentifier("replyTweetSegue", sender: nil)
+    }
+    
+    @IBAction func onRetweetClicked(sender: UIButton) {
+        MBProgressHUD.showHUDAddedTo(self.view, animated: true)
+        TwitterClient.sharedInstance.retweet(tweet!, success: { (retweet) in
+            MBProgressHUD.hideHUDForView(self.view, animated: true)
+            self.tweet!.retweetedStatus = retweet
+            self.renderTweet()
+        }) { (error) in
+            MBProgressHUD.hideHUDForView(self.view, animated: true)
+            ViewUtils.viewController(self, displayMessage: error.localizedDescription)
+        }
+    }
+    
+    @IBAction func onFavoriteClicked(sender: UIButton) {
+        MBProgressHUD.showHUDAddedTo(self.view, animated: true)
+        TwitterClient.sharedInstance.favorite(tweet!, favorited: !(tweet?.favorited)! ?? true, success: { (tweet) in
+            MBProgressHUD.hideHUDForView(self.view, animated: true)
+            self.tweet = tweet
+            self.renderTweet()
+        }) { (error) in
+            MBProgressHUD.hideHUDForView(self.view, animated: true)
+            ViewUtils.viewController(self, displayMessage: error.localizedDescription)
+        }
+    }
+    
+    func renderTweet() {
         retweetTypeView.font = UIFont.fontAwesomeOfSize(self.iconSize)
         replyView.titleLabel?.font = UIFont.fontAwesomeOfSize(self.iconSize)
         retweetView.titleLabel?.font = UIFont.fontAwesomeOfSize(self.iconSize)
@@ -81,5 +124,20 @@ class TweetViewController: UIViewController {
         timeView.text = tweet?.timestamp?.formattedDateWithStyle(NSDateFormatterStyle.LongStyle, timeZone: NSTimeZone.defaultTimeZone())
         
         scrollView.contentSize = CGSize(width: scrollView.frame.size.width, height: contentView.frame.size.height + 20)
+    }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if segue.identifier == "replyTweetSegue" {
+            if let vc = segue.destinationViewController as? PostTweetViewController {
+                vc.tweet = self.tweet
+            }
+        }
+    }
+}
+
+extension TweetViewController: PostTweetViewControllerDelegate {
+    func postTweetViewController(postTweetViewController: PostTweetViewController, tweetDidPost: Tweet) {
+        self.dismissViewControllerAnimated(true, completion: nil)
+        self.delegate?.tweetDidReplyTweet?(tweetDidPost)
     }
 }

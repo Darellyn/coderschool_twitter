@@ -75,4 +75,48 @@ class TwitterClient: BDBOAuth1SessionManager {
         
         NSNotificationCenter.defaultCenter().postNotificationName(User.userDidLogOutNotification, object: nil)
     }
+    
+    func postStatus(replyToTweet: Tweet?, status: String, success: (Tweet -> ())?, failure: (NSError -> ())?) {
+        var parameters = [String: AnyObject]()
+        parameters["status"] = status
+        if let replyToTweet = replyToTweet {
+            parameters["in_reply_to_status_id"] = "\(replyToTweet.id!)"
+            if let photo = replyToTweet.photo {
+                parameters["media_ids"] = "\(photo.id!)"
+            }
+        }
+        TwitterClient.sharedInstance.POST("1.1/statuses/update.json", parameters: parameters, progress: nil, success: { (_, response: AnyObject?) in
+            let tweet = Tweet(dictionary: response as! NSDictionary)
+            success?(tweet)
+        }) { (_, error: NSError) in
+            failure?(error)
+        }
+    }
+    
+    func retweet(tweet: Tweet, success: (Tweet -> ())?, failure: (NSError -> ())?) {
+        TwitterClient.sharedInstance.POST("1.1/statuses/retweet/\(tweet.id!).json", parameters: nil, progress: nil, success: { (_, response: AnyObject?) in
+            let tweet = Tweet(dictionary: response as! NSDictionary)
+            success?(tweet)
+        }) { (_, error: NSError) in
+            failure?(error)
+        }
+    }
+
+    func unretweet(tweet: Tweet, success: (Tweet -> ())?, failure: (NSError -> ())?) {
+        TwitterClient.sharedInstance.POST("1.1/statuses/unretweet/\(tweet.id!).json", parameters: nil, progress: nil, success: { (_, response: AnyObject?) in
+            let tweet = Tweet(dictionary: response as! NSDictionary)
+            success?(tweet)
+        }) { (_, error: NSError) in
+            failure?(error)
+        }
+    }
+    
+    func favorite(tweet: Tweet, favorited: Bool, success: (Tweet -> ())?, failure: (NSError -> ())?) {
+        TwitterClient.sharedInstance.POST("1.1/favorites/\(favorited ? "create" : "destroy").json", parameters: ["id": "\(tweet.id!)"], progress: nil, success: { (_, response: AnyObject?) in
+            let tweet = Tweet(dictionary: response as! NSDictionary)
+            success?(tweet)
+        }) { (_, error: NSError) in
+            failure?(error)
+        }
+    }
 }
