@@ -15,8 +15,12 @@ class TwitterClient: BDBOAuth1SessionManager {
     var loginSuccess: (() -> ())?
     var loginFailure: ((NSError) -> ())?
     
-    func homeTimeLine(success: ([Tweet]) -> (), failure: (NSError) -> ()) {
-        TwitterClient.sharedInstance.GET("1.1/statuses/home_timeline.json", parameters: nil, progress: nil, success: { (_, response: AnyObject?) in
+    func homeTimeLine(sinceId: String?, success: ([Tweet]) -> (), failure: (NSError) -> ()) {
+        var parameters = [String: AnyObject]()
+        if let sinceId = sinceId {
+            parameters["since_id"] = sinceId
+        }
+        TwitterClient.sharedInstance.GET("1.1/statuses/home_timeline.json", parameters: parameters, progress: nil, success: { (_, response: AnyObject?) in
                 let tweets = Tweet.tweetsWithArray(response as! [NSDictionary])
                 success(tweets)
             }) { (_, error: NSError) in
@@ -94,7 +98,8 @@ class TwitterClient: BDBOAuth1SessionManager {
     }
     
     func retweet(tweet: Tweet, success: (Tweet -> ())?, failure: (NSError -> ())?) {
-        TwitterClient.sharedInstance.POST("1.1/statuses/retweet/\(tweet.id!).json", parameters: nil, progress: nil, success: { (_, response: AnyObject?) in
+        let retweet = tweet.retweetedStatus ?? tweet
+        TwitterClient.sharedInstance.POST("1.1/statuses/retweet/\(retweet.id!).json", parameters: nil, progress: nil, success: { (_, response: AnyObject?) in
             let tweet = Tweet(dictionary: response as! NSDictionary)
             success?(tweet)
         }) { (_, error: NSError) in
