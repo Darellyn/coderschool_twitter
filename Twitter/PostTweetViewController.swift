@@ -17,7 +17,7 @@ class PostTweetViewController: UIViewController {
     @IBOutlet weak var charactersLeftView: UILabel!
     @IBOutlet weak var statusView: UITextField!
     var tweet: Tweet?
-    var delegate: PostTweetViewControllerDelegate?
+    var delegate: TweetDelegate?
     
     override func viewDidLoad() {
         if let currentUser = User.currentUser {
@@ -42,7 +42,7 @@ class PostTweetViewController: UIViewController {
         MBProgressHUD.showHUDAddedTo(self.view, animated: true)
         TwitterClient.sharedInstance.postStatus(tweet, status: statusView.text!, success: { (tweet) in
             MBProgressHUD.hideHUDForView(self.view, animated: true)
-            self.delegate?.postTweetViewController?(self, tweetDidPost: tweet)
+            self.delegate?.tweetDidPost?(tweet)
             self.dismissViewControllerAnimated(true, completion: nil)
         }) { (error) in
             MBProgressHUD.hideHUDForView(self.view, animated: true)
@@ -52,8 +52,4 @@ class PostTweetViewController: UIViewController {
     @IBAction func onStatusEditingChanged(sender: UITextField) {
         charactersLeftView.text = "\(140 - (sender.text?.characters.count)!)"
     }
-}
-
-@objc protocol PostTweetViewControllerDelegate {
-    optional func postTweetViewController(postTweetViewController: PostTweetViewController, tweetDidPost: Tweet)
 }

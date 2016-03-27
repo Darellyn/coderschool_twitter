@@ -29,6 +29,7 @@ class TweetCell: UITableViewCell {
     @IBOutlet weak var photoViewWidthConstraint: NSLayoutConstraint!
     @IBOutlet weak var avatarTopConstraint: NSLayoutConstraint!
     let iconSize = CGFloat(20)
+    static let highlightColor = UIColor.init(red: 1.0, green: 0.75, blue: 0.18, alpha: 1.0)
 
     var tweet: Tweet? {
         didSet {
@@ -40,9 +41,11 @@ class TweetCell: UITableViewCell {
             retweetTypeView.text = String.fontAwesomeIconWithName(.Retweet)
             replyView.setTitle(String.fontAwesomeIconWithName(.Reply), forState: .Normal)
             retweetView.setTitle(String.fontAwesomeIconWithName(.Retweet), forState: .Normal)
+            let retweeted = tweet?.retweeted ?? false
+            retweetView.setTitleColor(retweeted ? TweetCell.highlightColor : UIColor.lightGrayColor(), forState: .Normal)
             let favorited = tweet?.favorited ?? false
             starView.setTitle(String.fontAwesomeIconWithName(favorited ? .Star : .StarO), forState: .Normal)
-            starView.setTitleColor(favorited ? UIColor.init(red: 1.0, green: 0.75, blue: 0.18, alpha: 1.0) : UIColor.lightGrayColor(), forState: .Normal)
+            starView.setTitleColor(favorited ? TweetCell.highlightColor : UIColor.lightGrayColor(), forState: .Normal)
 
             let retweetedStatus = tweet?.retweetedStatus
             if let retweetedStatus = retweetedStatus {
@@ -51,13 +54,13 @@ class TweetCell: UITableViewCell {
                 retweetByView.text = "\(tweet?.user?.name ?? "") retweeted"
                 avatarTopConstraint.constant = 29
                 authorLabel.text = retweetedStatus.user?.name
-                screenNameView.text = retweetedStatus.user?.screenName
+                screenNameView.text = "@\(retweetedStatus.user?.screenName ?? "")"
             } else {
                 retweetTypeView.hidden = true
                 retweetByView.hidden = true
                 avatarTopConstraint.constant = 8
                 authorLabel.text = tweet?.user?.name
-                screenNameView.text = tweet?.user?.screenName
+                screenNameView.text = "@\(tweet?.user?.screenName ?? "")"
             }
             statusView.text = tweet?.text ?? ""
             photoView.image = nil

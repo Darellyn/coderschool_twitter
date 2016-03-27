@@ -43,7 +43,7 @@ class TweetsViewController: UIViewController, UIScrollViewDelegate {
     
     func setupRefreshControl() {
         refreshControl = UIRefreshControl()
-        refreshControl.addTarget(self, action: #selector(TweetsViewController.loadTweets(_:)), forControlEvents: UIControlEvents.ValueChanged)
+        refreshControl.addTarget(self, action: #selector(TweetsViewController.loadTweetsInit(_:)), forControlEvents: UIControlEvents.ValueChanged)
         tableView.insertSubview(refreshControl, atIndex: 0)
     }
     
@@ -80,9 +80,14 @@ class TweetsViewController: UIViewController, UIScrollViewDelegate {
         loadTweets(self.refreshControl)
     }
     
+    func loadTweetsInit(refreshControl: UIRefreshControl) {
+        self.sinceId = nil
+        self.tweets = []
+        loadTweets(self.refreshControl)
+    }
+
     func loadTweets(refreshControl: UIRefreshControl) {
         TwitterClient.sharedInstance.homeTimeLine(self.sinceId, success: { (tweets) in
-            refreshControl.endRefreshing()
             if self.sinceId == nil {
                 self.tweets = tweets
             } else {
@@ -90,8 +95,11 @@ class TweetsViewController: UIViewController, UIScrollViewDelegate {
             }
             self.sinceId = tweets.last?.id
             self.tableView.reloadData()
+            refreshControl.endRefreshing()
+            self.isMoreDataLoading = false
         }) { (error) in
             refreshControl.endRefreshing()
+            self.isMoreDataLoading = false
             ViewUtils.viewController(self, displayMessage: error.localizedDescription)
         }
     }
@@ -111,11 +119,11 @@ class TweetsViewController: UIViewController, UIScrollViewDelegate {
         let row = sender.tag
         let tweet = tweets[row]
         MBProgressHUD.showHUDAddedTo(self.view, animated: true)
-        TwitterClient.sharedInstance.retweet(tweet, success: { (retweet) in
+        let retweeted = !tweet.retweeted
+        TwitterClient.sharedInstance.retweet(tweet, retweeted: retweeted, success: { (retweet) in
             MBProgressHUD.hideHUDForView(self.view, animated: true)
-            tweet.retweetedStatus = retweet
+            self.tweets[row] = retweet
             self.tableView.reloadData()
-            self.loadTweets()
         }) { (error) in
             MBProgressHUD.hideHUDForView(self.view, animated: true)
             ViewUtils.viewController(self, displayMessage: error.localizedDescription)
@@ -130,7 +138,6 @@ class TweetsViewController: UIViewController, UIScrollViewDelegate {
             MBProgressHUD.hideHUDForView(self.view, animated: true)
             self.tweets[row] = tweet
             self.tableView.reloadData()
-            self.loadTweets()
         }) { (error) in
             MBProgressHUD.hideHUDForView(self.view, animated: true)
             ViewUtils.viewController(self, displayMessage: error.localizedDescription)
@@ -177,30 +184,42 @@ extension TweetsViewController: UITableViewDataSource, UITableViewDelegate {
     }
 }
 
-extension TweetsViewController: PostTweetViewControllerDelegate {
-    func postTweetViewController(postTweetViewController: PostTweetViewController, tweetDidPost: Tweet) {
-        self.tweetDidReplyTweet(tweetDidPost)
-    }
-}
-
 extension TweetsViewController: TweetDelegate {
     func tweetDidFavorite(tweet: Tweet) {
+        updateTweet(tweet)
         self.tableView.reloadData()
     }
     func tweetDidUnFavorite(tweet: Tweet) {
+        updateTweet(tweet)
         self.tableView.reloadData()
     }
     func tweetDidRetweet(tweet: Tweet) {
+        updateTweet(tweet)
         self.tableView.reloadData()
     }
     func tweetDidUnRetweet(tweet: Tweet) {
+        updateTweet(tweet)
         self.tableView.reloadData()
     }
     func tweetDidReplyTweet(tweet: Tweet) {
+        onNewPost(tweet)
+    }
+    func tweetDidPost(tweet: Tweet) {
+        onNewPost(tweet)
+    }
+    func updateTweet(tweet: Tweet) {
+        for index in 0..<self.tweets.count {
+            let t = self.tweets[index]
+            if t.id == tweet.id {
+                tweets[index] = tweet
+                break
+            }
+        }
+    }
+    func onNewPost(tweet: Tweet) {
         self.tweetDidPost = tweet
         self.performSegueWithIdentifier("viewTweetSegue", sender: nil)
         tweets.insert(tweet, atIndex: 0)
         tableView.reloadData()
-        loadTweets()
     }
 }

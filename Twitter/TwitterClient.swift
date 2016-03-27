@@ -97,9 +97,9 @@ class TwitterClient: BDBOAuth1SessionManager {
         }
     }
     
-    func retweet(tweet: Tweet, success: (Tweet -> ())?, failure: (NSError -> ())?) {
+    func retweet(tweet: Tweet, retweeted: Bool, success: (Tweet -> ())?, failure: (NSError -> ())?) {
         let retweet = tweet.retweetedStatus ?? tweet
-        TwitterClient.sharedInstance.POST("1.1/statuses/retweet/\(retweet.id!).json", parameters: nil, progress: nil, success: { (_, response: AnyObject?) in
+        TwitterClient.sharedInstance.POST("1.1/statuses/\(retweeted ? "retweet" : "unretweet")/\(retweet.id!).json", parameters: nil, progress: nil, success: { (_, response: AnyObject?) in
             let tweet = Tweet(dictionary: response as! NSDictionary)
             success?(tweet)
         }) { (_, error: NSError) in
@@ -107,15 +107,6 @@ class TwitterClient: BDBOAuth1SessionManager {
         }
     }
 
-    func unretweet(tweet: Tweet, success: (Tweet -> ())?, failure: (NSError -> ())?) {
-        TwitterClient.sharedInstance.POST("1.1/statuses/unretweet/\(tweet.id!).json", parameters: nil, progress: nil, success: { (_, response: AnyObject?) in
-            let tweet = Tweet(dictionary: response as! NSDictionary)
-            success?(tweet)
-        }) { (_, error: NSError) in
-            failure?(error)
-        }
-    }
-    
     func favorite(tweet: Tweet, favorited: Bool, success: (Tweet -> ())?, failure: (NSError -> ())?) {
         TwitterClient.sharedInstance.POST("1.1/favorites/\(favorited ? "create" : "destroy").json", parameters: ["id": "\(tweet.id!)"], progress: nil, success: { (_, response: AnyObject?) in
             let tweet = Tweet(dictionary: response as! NSDictionary)

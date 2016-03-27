@@ -15,7 +15,7 @@ import MBProgressHUD
     optional func tweetDidUnFavorite(tweet: Tweet)
     optional func tweetDidRetweet(tweet: Tweet)
     optional func tweetDidUnRetweet(tweet: Tweet)
-    optional func tweetDidReplyTweet(tweet: Tweet)
+    optional func tweetDidPost(tweet: Tweet)
 }
 
 class TweetViewController: UIViewController {
@@ -52,10 +52,16 @@ class TweetViewController: UIViewController {
     
     @IBAction func onRetweetClicked(sender: UIButton) {
         MBProgressHUD.showHUDAddedTo(self.view, animated: true)
-        TwitterClient.sharedInstance.retweet(tweet!, success: { (retweet) in
+        let retweeted = !tweet!.retweeted
+        TwitterClient.sharedInstance.retweet(tweet!, retweeted: retweeted, success: { (tweet) in
             MBProgressHUD.hideHUDForView(self.view, animated: true)
-            self.tweet!.retweetedStatus = retweet
+            self.tweet? = tweet
             self.renderTweet()
+            if tweet.retweeted {
+                self.delegate?.tweetDidRetweet?(tweet)
+            } else {
+                self.delegate?.tweetDidUnRetweet?(tweet)
+            }
         }) { (error) in
             MBProgressHUD.hideHUDForView(self.view, animated: true)
             ViewUtils.viewController(self, displayMessage: error.localizedDescription)
@@ -68,6 +74,11 @@ class TweetViewController: UIViewController {
             MBProgressHUD.hideHUDForView(self.view, animated: true)
             self.tweet = tweet
             self.renderTweet()
+            if tweet.favorited {
+                self.delegate?.tweetDidFavorite?(tweet)
+            } else {
+                self.delegate?.tweetDidUnFavorite?(tweet)
+            }
         }) { (error) in
             MBProgressHUD.hideHUDForView(self.view, animated: true)
             ViewUtils.viewController(self, displayMessage: error.localizedDescription)
@@ -83,9 +94,11 @@ class TweetViewController: UIViewController {
         retweetTypeView.text = String.fontAwesomeIconWithName(.Retweet)
         replyView.setTitle(String.fontAwesomeIconWithName(.Reply), forState: .Normal)
         retweetView.setTitle(String.fontAwesomeIconWithName(.Retweet), forState: .Normal)
+        let retweeted = tweet?.retweeted ?? false
+        retweetView.setTitleColor(retweeted ? TweetCell.highlightColor : UIColor.lightGrayColor(), forState: .Normal)
         let favorited = tweet?.favorited ?? false
         starView.setTitle(String.fontAwesomeIconWithName(favorited ? .Star : .StarO), forState: .Normal)
-        starView.setTitleColor(favorited ? UIColor.init(red: 1.0, green: 0.75, blue: 0.18, alpha: 1.0) : UIColor.lightGrayColor(), forState: .Normal)
+        starView.setTitleColor(favorited ? TweetCell.highlightColor : UIColor.lightGrayColor(), forState: .Normal)
         
         let retweetedStatus = tweet?.retweetedStatus
         if let retweetedStatus = retweetedStatus {
@@ -94,13 +107,13 @@ class TweetViewController: UIViewController {
             retweetByView.text = "\(tweet?.user?.name ?? "") retweeted"
             avatarTopConstraint.constant = 37
             authorLabel.text = retweetedStatus.user?.name
-            screenNameView.text = retweetedStatus.user?.screenName
+            screenNameView.text = "@\(retweetedStatus.user?.screenName ?? "")"
         } else {
             retweetTypeView.hidden = true
             retweetByView.hidden = true
             avatarTopConstraint.constant = 8
             authorLabel.text = tweet?.user?.name
-            screenNameView.text = tweet?.user?.screenName
+            screenNameView.text = "@\(tweet?.user?.screenName ?? "")"
         }
         statusView.text = tweet?.text ?? ""
         photoView.image = nil
@@ -135,9 +148,9 @@ class TweetViewController: UIViewController {
     }
 }
 
-extension TweetViewController: PostTweetViewControllerDelegate {
-    func postTweetViewController(postTweetViewController: PostTweetViewController, tweetDidPost: Tweet) {
+extension TweetViewController: TweetDelegate {
+    func tweetDidPost(tweet: Tweet) {
         self.dismissViewControllerAnimated(true, completion: nil)
-        self.delegate?.tweetDidReplyTweet?(tweetDidPost)
+        self.delegate?.tweetDidPost?(tweet)
     }
 }
