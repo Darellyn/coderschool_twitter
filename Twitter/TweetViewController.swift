@@ -10,6 +10,8 @@ import UIKit
 import FontAwesome_swift
 
 class TweetViewController: UIViewController {
+    @IBOutlet weak var scrollView: UIScrollView!
+    @IBOutlet weak var contentView: UIView!
     @IBOutlet weak var retweetTypeView: UILabel!
     @IBOutlet weak var avatarImageView: UIImageView!
     @IBOutlet weak var retweetByView: UILabel!
@@ -59,8 +61,8 @@ class TweetViewController: UIViewController {
         }
         statusView.text = tweet?.text ?? ""
         photoView.image = nil
-        if let photoUrlSmall = tweet?.photo?.mediaSmallUrl {
-            photoView.af_setImageWithURL(photoUrlSmall, imageTransition: .CrossDissolve(0.2))
+        if let photoUrlLarge = tweet?.photo?.mediaLargeUrl {
+            photoView.af_setImageWithURL(photoUrlLarge, imageTransition: .CrossDissolve(0.2))
             let ratio = tweet?.photo?.ratio
             if let ratio = ratio {
                 photoViewHeightConstraint.constant = photoView.frame.width * ratio
